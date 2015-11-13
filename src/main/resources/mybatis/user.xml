@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper 
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"> 
+<mapper namespace="com.demo.domain.UserDO">
+
+	<resultMap type="UserDO" id="userDOResultMap">  
+        <id property="id" column="id"/>  
+        <result property="name" column="name"/>  
+        <result property="password" column="password"/>  
+    </resultMap>  
+
+	<!--     定义一条查询语句，在bean的implementation中会引用此语句的id  -->
+    <insert id="add" parameterType="UserDO" 
+        useGeneratedKeys="true" keyProperty="id"> 
+        INSERT INTO user (name, password) 
+        VALUES(#{name},#{password}) 
+    </insert> 
+    
+    
+     <select id="select" resultMap="userDOResultMap">
+        select id, name, password from user
+    </select> 
+</mapper>
