@@ -8,7 +8,6 @@ import com.demo.domain.BookDO;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
 
 /**
  *
@@ -19,12 +18,11 @@ public class BookConvertor {
 
     public static Document convert2Doc(BookDO bookDO) {
         Document doc = new Document();
-        String idstr = bookDO.getId() + "";
 
-        doc.add(new TextField("id", idstr, Field.Store.NO.YES));
-        doc.add(new TextField("name", bookDO.getName(), Field.Store.YES));
-        doc.add(new TextField("author", bookDO.getAuthor(), Field.Store.YES));
-        doc.add(new TextField("content", bookDO.getContent(), Field.Store.YES));
+        doc.add(new Field("id", bookDO.getId() + "", Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("name", bookDO.getName(), Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("author", bookDO.getAuthor(),Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("content", bookDO.getContent(), Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
         return doc;
     }
 }

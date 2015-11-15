@@ -23,10 +23,12 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="demo" />
+        <module name="lucenceDemo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="1.5" />
+      <module name="lucenceDemo" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
