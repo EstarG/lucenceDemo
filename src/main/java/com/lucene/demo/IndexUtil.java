@@ -6,7 +6,6 @@ package com.lucene.demo;
 
 import com.demo.convertor.BookConvertor;
 import com.demo.domain.BookDO;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -66,8 +65,8 @@ public class IndexUtil {
             // 2. 初始化writer
             IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35,
                 new StandardAnalyzer(Version.LUCENE_35));
-			// 每次都重新创建
-			config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+            // 每次都重新创建
+            config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
             indexWriter = new IndexWriter(directory, config);
 
             // 3. 初始化reader
@@ -160,7 +159,6 @@ public class IndexUtil {
         }
     }
 
-
     /**
      * 模拟数据库添加，同时添加索引
      *
@@ -178,11 +176,11 @@ public class IndexUtil {
         indexWriter.commit();
     }
 
-	/**
-	 * 检索
-	 *
-	 * @param keyword
-	 */
+    /**
+     * 检索
+     *
+     * @param keyword
+     */
     public static void search(String keyword) {
         try {
             indexReader = getIndexReader();
@@ -212,27 +210,24 @@ public class IndexUtil {
         } catch (Exception e) {
             logger.equals("查询失败:" + e.getMessage());
         } finally {
-		}
-	}
+        }
+    }
 
     private static IndexReader getIndexReader() throws IOException {
         // 清新获取reader， 保证seacher最新的索引
         IndexReader newIr = IndexReader.openIfChanged(indexReader);
         if (null != newIr) {
-			indexReader.close();
-			indexReader = newIr;
-		}
+            indexReader.close();
+            indexReader = newIr;
+        }
         return indexReader;
     }
 
     public static void numDocs() throws IOException {
         indexReader = getIndexReader();
-		logger.info("已删除的数量" + indexReader.numDeletedDocs());
-		logger.info("numDocs" + indexReader.numDocs());
-		logger.info("maxDoc" + indexReader.maxDoc());
-	}
-
-
-
+        logger.info("已删除的数量" + indexReader.numDeletedDocs());
+        logger.info("numDocs" + indexReader.numDocs());
+        logger.info("maxDoc" + indexReader.maxDoc());
+    }
 
 }

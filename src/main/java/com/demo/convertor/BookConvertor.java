@@ -18,11 +18,14 @@ public class BookConvertor {
 
     public static Document convert2Doc(BookDO bookDO) {
         Document doc = new Document();
+        String idstr = bookDO.getId() + "";
 
-        doc.add(new Field("id", bookDO.getId() + "", Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("id", idstr, Field.Store.YES, Field.Index.ANALYZED));
+
         doc.add(new Field("name", bookDO.getName(), Field.Store.YES, Field.Index.ANALYZED));
-        doc.add(new Field("author", bookDO.getAuthor(),Field.Store.YES, Field.Index.ANALYZED));
-        doc.add(new Field("content", bookDO.getContent(), Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
+        doc.add(new Field("author", bookDO.getAuthor(), Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("content", bookDO.getContent(), Field.Store.YES,
+            Field.Index.ANALYZED_NO_NORMS));
         return doc;
     }
 }
