@@ -30,22 +30,52 @@ public class IndexUtilTest extends TestCase {
      */
     @Test
     public void testCreate() {
-        IndexUtil.creatIndex();
+
+        try {
+            IndexUtil.creatIndex();
+        } catch (Exception e) {
+            assertTrue(e.getMessage(), false);
+        }
     }
 
     /**
      * 删除索引
      */
     @Test
-    public void testDelete() throws IOException {
+    public void testDelete() {
 
-        IndexUtil.search("Java");
-        IndexUtil.numDocs();
+        try {
+            IndexUtil.search("Java");
+            IndexUtil.numDocs();
 
-        IndexUtil.deleteIndex();
+            IndexUtil.deleteIndex();
 
-        IndexUtil.search("Java");
-        IndexUtil.numDocs();
+            IndexUtil.search("Java");
+            IndexUtil.numDocs();
+        } catch (Exception e) {
+            assertTrue(e.getMessage(), false);
+        }
+    }
+
+    /**
+     * 删除索引
+     */
+    @Test
+    public void testDeleteAll() {
+
+        try {
+
+            IndexUtil.search("Java");
+            IndexUtil.numDocs();
+
+            IndexUtil.deleteAllIndex();
+
+            IndexUtil.search("Java");
+            IndexUtil.numDocs();
+        } catch (Exception e) {
+            assertTrue(e.getMessage(), false);
+        }
+
     }
 
     /**
@@ -54,32 +84,51 @@ public class IndexUtilTest extends TestCase {
     @Test
     public void testSearch() throws Exception {
 
-        IndexUtil.search("Java");
-        IndexUtil.numDocs();
+        try {
+
+            IndexUtil.search("Java");
+            IndexUtil.numDocs();
+
+        } catch (Exception e) {
+            assertTrue(e.getMessage(), false);
+        }
+
     }
 
     @Test
     public void testNuns() throws Exception {
 
-        IndexUtil.numDocs();
+        try {
+
+            IndexUtil.numDocs();
+
+        } catch (IOException e) {
+            assertTrue(e.getMessage(), false);
+        }
     }
 
     /**
-	 * 更新
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public static void testUpdate() throws Exception {
-		IndexUtil.numDocs();
-		IndexUtil.search("Java");
+     * 更新
+     *
+     * @throws Exception
+     */
+    @Test
+    public static void testUpdate() throws Exception {
 
-		IndexUtil.updateIndex();
+        try {
 
-		System.out.println("更新完毕");
+            IndexUtil.numDocs();
+            IndexUtil.search("Java");
 
-		IndexUtil.numDocs();
-		IndexUtil.search("Java");
-	}
+            IndexUtil.updateIndex();
 
+            System.out.println("更新完毕");
+
+            IndexUtil.numDocs();
+            IndexUtil.search("Java");
+
+        } catch (IOException e) {
+            assertTrue(e.getMessage(), false);
+        }
+    }
 }

@@ -6,12 +6,11 @@ package com.lucene.demo;
 
 import com.demo.convertor.BookConvertor;
 import com.demo.domain.BookDO;
-import org.apache.log4j.Logger;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
@@ -19,68 +18,22 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
+ * 索引操作工具
  *
  * @author baoxing.gbx
  * @version $Id:IndexUtil.java, V 0.1 2015-11-15 14:23 baoxing.gbx Exp $$
  */
-public class IndexUtil {
-
-    private static final int MAX    = 10;
-    private static Logger    logger = Logger.getLogger(IndexUtil.class);
-
-    /** 索引读 */
-    private static IndexReader indexReader;
-
-    /** 索引写 */
-    private static IndexWriter indexWriter;
-
-    /** 目录 */
-    private static Directory directory;
-
-    /** 模拟数据库 */
-    private static Map<String, Object> dataBase = new HashMap<String, Object>();
-
-    // 初始化
-    static {
-
-        try {
-            Properties properties = new Properties();
-            properties
-                .load(IndexUtil.class.getClassLoader().getResourceAsStream("lucence.properties"));
-
-            // 1. 初始化Directory
-            directory = FSDirectory.open(new File((String) properties.get("path")));
-
-            // 2. 初始化writer
-            IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35,
-                new StandardAnalyzer(Version.LUCENE_35));
-            // 每次都重新创建
-            config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-            indexWriter = new IndexWriter(directory, config);
-
-            // 3. 初始化reader
-            indexReader = IndexReader.open(directory);
-
-        } catch (Exception e) {
-            logger.info("初始化错误:" + e.getMessage());
-        }
-    }
+public class IndexUtil extends BaseUtil {
 
     /**
      * 创建索引
      */
-    public static void creatIndex() {
+    public static void creatIndex() throws Exception {
 
         try {
             //  循环添加书
@@ -124,26 +77,48 @@ public class IndexUtil {
             }
         } catch (Exception e) {
             logger.equals("索引创建失败:" + e.getMessage());
+            throw e;
         }
     }
 
     /**
      * 删除索引
      */
-    public static void deleteIndex() {
-        Term term = new Term("id", 1 + "");
+    public static void deleteIndex() throws Exception {
+
         try {
+            Term term = new Term("id", 1 + "");
+
+            IndexWriter indexWriter = getIndexWriter();
+
             indexWriter.deleteDocuments(term);
             indexWriter.commit();
+        } catch (Exception e) {
+            logger.error("删除索引失败");
+            throw e;
+        }
+
+    }
+
+    /**
+     * 删除索引
+     */
+    public static void deleteAllIndex() throws Exception {
+        try {
+            getIndexWriter().deleteAll();
+            getIndexWriter().commit();
+
         } catch (IOException e) {
+
             logger.equals("索引删除失败:" + e.getMessage());
+            throw e;
         }
     }
 
     /**
      * 删除索引
      */
-    public static void updateIndex() {
+    public static void updateIndex() throws Exception {
         Term term = new Term("id", 1 + "");
         BookDO bookDO = new BookDO();
         bookDO.setId(1);
@@ -152,10 +127,11 @@ public class IndexUtil {
         bookDO.setContent("Java");
 
         try {
-            indexWriter.updateDocument(term, BookConvertor.convert2Doc(bookDO));
-            indexWriter.commit();
+            getIndexWriter().updateDocument(term, BookConvertor.convert2Doc(bookDO));
+            getIndexWriter().commit();
         } catch (IOException e) {
             logger.equals("索引更新失败:" + e.getMessage());
+            throw e;
         }
     }
 
@@ -171,9 +147,9 @@ public class IndexUtil {
         dataBase.put(bookDO.getId() + "", bookDO);
         // 索引操作
         Document document = BookConvertor.convert2Doc(bookDO);
-        indexWriter.addDocument(document);
+        getIndexWriter().addDocument(document);
         // 必须提交否则不奏效
-        indexWriter.commit();
+        getIndexWriter().commit();
     }
 
     /**
@@ -181,12 +157,13 @@ public class IndexUtil {
      *
      * @param keyword
      */
-    public static void search(String keyword) {
-        try {
-            indexReader = getIndexReader();
+    public static void search(String keyword) throws Exception {
 
+        IndexSearcher searcher = null;
+
+        try {
             // 创建search
-            IndexSearcher searcher = new IndexSearcher(indexReader);
+            searcher = getIndexSearcher();
 
             String[] fields = { "name", "author", "content" };
             QueryParser queryParser = new MultiFieldQueryParser(Version.LUCENE_35, fields,
@@ -208,23 +185,13 @@ public class IndexUtil {
             }
 
         } catch (Exception e) {
-            logger.equals("查询失败:" + e.getMessage());
-        } finally {
+            logger.error("查询失败:" + e.getMessage());
+            throw e;
         }
-    }
-
-    private static IndexReader getIndexReader() throws IOException {
-        // 清新获取reader， 保证seacher最新的索引
-        IndexReader newIr = IndexReader.openIfChanged(indexReader);
-        if (null != newIr) {
-            indexReader.close();
-            indexReader = newIr;
-        }
-        return indexReader;
     }
 
     public static void numDocs() throws IOException {
-        indexReader = getIndexReader();
+        IndexReader indexReader = getIndexReader();
         logger.info("已删除的数量" + indexReader.numDeletedDocs());
         logger.info("numDocs" + indexReader.numDocs());
         logger.info("maxDoc" + indexReader.maxDoc());
