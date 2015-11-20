@@ -76,7 +76,7 @@ public class IndexUtil extends BaseUtil {
                 addDoc(bookDO);
             }
         } catch (Exception e) {
-            logger.equals("索引创建失败:" + e.getMessage());
+            logger.error("索引创建失败:" + e.getMessage());
             throw e;
         }
     }

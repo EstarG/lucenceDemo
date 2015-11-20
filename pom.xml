@@ -283,6 +283,13 @@
             <version>${lucene.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.chenlb.mmseg4j</groupId>
+            <artifactId>mmseg4j-all-with-dic</artifactId>
+            <version>1.8.6</version>
+        </dependency>
+
+
   </dependencies>
   <build>
      <finalName>demo</finalName>
