@@ -21,7 +21,7 @@ public class IndexUtilTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        IndexUtil.creatIndex();
+        //IndexUtil.creatIndex();
     }
 
     /**
